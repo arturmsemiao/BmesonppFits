@@ -494,13 +494,14 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 1, int usePbPb =
 		if(drawOpt ==1) tex_pt->Draw();
 		tex_pt->Draw();
 
+		/*
 		tex_hibin->SetNDC();
 		tex_hibin->SetTextFont(42);
 		tex_hibin->SetTextSize(0.045);
 		tex_hibin->SetLineWidth(2);
 		if(drawOpt ==1) tex_hibin->Draw();
 		tex_hibin->Draw();
-
+		*/
 		std::cout<<"CHEGUEI AQUI"<<std::endl;
 
 
@@ -587,7 +588,7 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 1, int usePbPb =
 			for(int j=0; j<background.size(); j++){
 				RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, ptBins_check[i], ptBins_check[i+1], isMC, isPbPb, centmin, centmax, npfit);
 				tex_pt->Draw();
-				tex_hibin->Draw();
+			//	tex_hibin->Draw();
 				tex_y->Draw();
 
 				c->SaveAs(Form("%s%s/%s_%s_%d%s_%s_%d%d_%s_doubly_%d",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),_count,_postfix.Data(),_varExp.Data(),(int)ptBins_check[i],(int)ptBins_check[i+1],background[j].c_str(), doubly)+tree+".pdf");
@@ -606,7 +607,7 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 1, int usePbPb =
 			for(int j=0; j<signal.size(); j++){
 				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, ptBins_check[i], ptBins_check[i+1], isMC, isPbPb, centmin, centmax, npfit);
 				tex_pt->Draw();
-				tex_hibin->Draw();
+			//	tex_hibin->Draw();
 				tex_y->Draw();
 
 				c->SaveAs(Form("%s%s/%s_%s_%d%s_%s_%d%d_%s_doubly_%d",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),_count,_postfix.Data(),_varExp.Data(),(int)ptBins_check[i],(int)ptBins_check[i+1],signal[j].c_str(), doubly)+tree+".pdf");
