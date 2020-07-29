@@ -439,15 +439,15 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 1, int usePbPb =
 
 
 		TLatex* tex_pt;
-		TLatex* tex_hibin;
+	//	TLatex* tex_hibin;
 		TLatex* tex_y;
 		    //tex = new TLatex(0.55,0.85,Form("%.0f < p_{T} < %.0f GeV/c",_ptBins[i],_ptBins[i+1]));
 			//if(varExp=="abs(By)") tex = new TLatex(0.55,0.85,Form("%.1f < y < %.1f",_ptBins[i],_ptBins[i+1]));
 		if(varExp=="Bpt"){
 			tex_pt = new TLatex(0.21,0.75,Form("%d < p_{T} < %d GeV/c",(int)ptBins_check[i],(int)ptBins_check[i+1]));
-			if(centmin==0&&centmax==90)tex_hibin = new TLatex(0.21,0.62,"Cent. 0-90%");
-			if(centmin==0&&centmax==30)tex_hibin = new TLatex(0.21,0.62,"Cent. 0-30%");
-			if(centmin==30&&centmax==90)tex_hibin = new TLatex(0.21,0.62,"Cent. 30-90%");
+	//		if(centmin==0&&centmax==90)tex_hibin = new TLatex(0.21,0.62,"Cent. 0-90%");
+	//		if(centmin==0&&centmax==30)tex_hibin = new TLatex(0.21,0.62,"Cent. 0-30%");
+	//		if(centmin==30&&centmax==90)tex_hibin = new TLatex(0.21,0.62,"Cent. 30-90%");
 			tex_y = new TLatex(0.21,0.69,"|y| < 2.4"); 
 	//	    tex = new TLatex(0.21,0.72,Form("%.0f < p_{T} < %.0f GeV/c",_ptBins[i],_ptBins[i+1]));
 
@@ -457,16 +457,16 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 1, int usePbPb =
 
 		if(varExp=="HiBin"){
 			tex_pt = new TLatex(0.21,0.75,"5 < p_{T} < 50 GeV/c");
-			tex_hibin = new TLatex(0.21,0.62,Form("Cent. %d-%d%%",(int)ptBins_check[i]/2,(int)ptBins_check[i+1]/2));
+		//	tex_hibin = new TLatex(0.21,0.62,Form("Cent. %d-%d%%",(int)ptBins_check[i]/2,(int)ptBins_check[i+1]/2));
 			tex_y = new TLatex(0.21,0.69,"|y| < 2.4");
 
 	//	    tex = new TLatex(0.21,0.72,Form("%.0f < p_{T} < %.0f GeV/c",_ptBins[i],_ptBins[i+1]));
 		}
 		if(varExp=="abs(By)"){
 			tex_pt = new TLatex(0.21,0.75,"5 < p_{T} < 50 GeV/c");
-			if(doubly==0)tex_hibin = new TLatex(0.21,0.62,"Cent. 0-90%");
-			if(doubly==1)tex_hibin = new TLatex(0.21,0.62,"Cent. 0-30%");
-			if(doubly==2)tex_hibin = new TLatex(0.21,0.62,"Cent. 30-90%");
+		//	if(doubly==0)tex_hibin = new TLatex(0.21,0.62,"Cent. 0-90%");
+		//	if(doubly==1)tex_hibin = new TLatex(0.21,0.62,"Cent. 0-30%");
+		//	if(doubly==2)tex_hibin = new TLatex(0.21,0.62,"Cent. 30-90%");
 			tex_y = new TLatex(0.21,0.69,Form("%.1f < |y| < %.1f",ptBins_check[i],ptBins_check[i+1]));
 		}
 		
