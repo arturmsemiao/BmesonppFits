@@ -28,6 +28,13 @@
 #include <RooMinuit.h>
 
 
+#include "RooMinimizer.h"
+#include "RooProfileLL.h"
+#include "RooMinuit.h"
+#include "RooWorkspace.h"
+#include "RooDataSet.h"
+#include "RooAbsReal.h"
+
 using namespace RooFit;
 using namespace std;
 
@@ -62,8 +69,11 @@ RooWorkspace* w_val= new RooWorkspace("w_vl");
 
 RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooDataHist* dhMC, RooRealVar* mass, RooPlot* &outframe, Double_t ptmin, Double_t ptmax, int isMC, bool isPbPb, Float_t centmin, Float_t centmax, TString npfit)
 {
+
+	double SignalWidth = 0.08;
+	
 	cout<<"total data: "<<ds->numEntries()<<endl;
-	TH1* h = dh->createHistogram("BmassNew");
+	TH1* h = dh->createHistogram("Bmass");
 	h->Sumw2(kFALSE);
 	h->SetBinErrorOption(TH1::kPoisson);
 	h->SetMarkerSize(1.55);
@@ -75,10 +85,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	frameMC->SetTitle("");
 	//frameMC->SetXTitle("m_{B} (GeV/c^{2})");
 	//	if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psi(#mu#muK^{#pm})} (GeV/c^{2})");
-	//	if(tree=="EffInfoTreeFit")frameMC->SetXTitle("m_{J/#psi(#mu#mu)#it{#phi}(KK)} (GeV/c^{2})");
+	//	if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psi(#mu#mu)#it{#phi}(KK)} (GeV/c^{2})");
 	if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psiK^{#pm}} (GeV/c^{2})");
-	//if(tree=="EffInfoTreeFit")frameMC->SetXTitle("m_{J/#psi#it{#phi}} (GeV/c^{2})");
-	if(tree=="EffInfoTreeFit")frameMC->SetXTitle("m_{J/#psi{K^{+}K^{-}}} (GeV/c^{2})");
+	//if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psi#it{#phi}} (GeV/c^{2})");
+	if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psi{K^{+}K^{-}}} (GeV/c^{2})");
 
 	frameMC->SetYTitle("Events / (20 MeV/c^{2})");
 	frameMC->GetXaxis()->CenterTitle();
@@ -104,8 +114,9 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 	cMC->cd();
 	double init_mean = 0;
-	if(tree=="EffInfoTreeFit") init_mean = BSUBS_MASS;
+	if(tree=="ntphi") init_mean = BSUBS_MASS;
 	if(tree=="ntKp") init_mean = BP_MASS;
+
 
 	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,5.,6.) ;
 	RooRealVar sigma1MC(Form("sigma1MC%d_%s",_count,pdf.Data()),"",0.02,0.01,0.1) ;
@@ -217,10 +228,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 
 	double mass_peak = 0;
-	if(tree=="EffInfoTreeFit") mass_peak = BSUBS_MASS;
+	if(tree=="ntphi") mass_peak = BSUBS_MASS;
 	if(tree=="ntKp") mass_peak = BP_MASS;
 
-	double n_signal_initial = ds->sumEntries(TString::Format("abs(BmassNew-%g)<0.05",mass_peak)) - ds->sumEntries(TString::Format("abs(BmassNew-%g)<0.10&&abs(BmassNew-%g)>0.05",mass_peak,mass_peak));
+	double n_signal_initial = ds->sumEntries(TString::Format("abs(Bmass-%g)<0.05",mass_peak)) - ds->sumEntries(TString::Format("abs(Bmass-%g)<0.10&&abs(Bmass-%g)>0.05",mass_peak,mass_peak));
 	if(n_signal_initial<0)
 		n_signal_initial=1;
 
@@ -242,10 +253,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 
 	//RooRealVar c2(Form("c2%d",_count),"",1.,0.,5.) ;
-	RooGenericPdf sig1_gen(Form("sig1_gen%d",_count),"", Form("exp(-0.5*(((BmassNew-mean%d)*(BmassNew-mean%d))/((c1%d*sigma1%d)*(c1%d*sigma1%d))))",_count, _count, _count, _count, _count, _count), RooArgSet(*mass, mean, sigma1, c1));
-	RooGenericPdf sig2_gen(Form("sig2_gen%d",_count),"", Form("exp(-0.5*(((BmassNew-mean%d)*(BmassNew-mean%d))/((c1%d*sigma2%d)*(c1%d*sigma2%d))))", _count, _count, _count, _count, _count, _count), RooArgSet(*mass, mean, sigma2, c1));
-	//  RooGenericPdf sig1(Form("sig1%d",_count),"", Form("(1/(c1%d*sigma1%d*sqrt(2*pi)))*exp(-0.5*(((BmassNew-mean%d)*(BmassNew-mean%d))/((c1%d*sigma1%d)*(c1%d*sigma1%d))))",_count, _count, _count, _count, _count, _count, _count, _count), RooArgSet(*mass, mean, sigma1, c1));
-	// RooGenericPdf sig2(Form("sig2%d",_count),"", Form("(1/(c1%d*sigma2%d*sqrt(2*pi)))*exp(-0.5*(((BmassNew-mean%d)*(BmassNew-mean%d))/((c1%d*sigma2%d)*(c1%d*sigma2%d))))", _count, _count, _count, _count, _count, _count, _count, _count), RooArgSet(*mass, mean, sigma2, c1));
+	RooGenericPdf sig1_gen(Form("sig1_gen%d",_count),"", Form("exp(-0.5*(((Bmass-mean%d)*(Bmass-mean%d))/((c1%d*sigma1%d)*(c1%d*sigma1%d))))",_count, _count, _count, _count, _count, _count), RooArgSet(*mass, mean, sigma1, c1));
+	RooGenericPdf sig2_gen(Form("sig2_gen%d",_count),"", Form("exp(-0.5*(((Bmass-mean%d)*(Bmass-mean%d))/((c1%d*sigma2%d)*(c1%d*sigma2%d))))", _count, _count, _count, _count, _count, _count), RooArgSet(*mass, mean, sigma2, c1));
+	//  RooGenericPdf sig1(Form("sig1%d",_count),"", Form("(1/(c1%d*sigma1%d*sqrt(2*pi)))*exp(-0.5*(((Bmass-mean%d)*(Bmass-mean%d))/((c1%d*sigma1%d)*(c1%d*sigma1%d))))",_count, _count, _count, _count, _count, _count, _count, _count), RooArgSet(*mass, mean, sigma1, c1));
+	// RooGenericPdf sig2(Form("sig2%d",_count),"", Form("(1/(c1%d*sigma2%d*sqrt(2*pi)))*exp(-0.5*(((Bmass-mean%d)*(Bmass-mean%d))/((c1%d*sigma2%d)*(c1%d*sigma2%d))))", _count, _count, _count, _count, _count, _count, _count, _count), RooArgSet(*mass, mean, sigma2, c1));
 	RooRealVar sig1frac(Form("sig1frac%d",_count),"",sig1fracMC.getVal(),0.,1.);
 	RooRealVar sig2frac(Form("sig2frac%d",_count),"",sig2fracMC.getVal(),0.,1.);
 	RooAddPdf* sig;
@@ -475,11 +486,15 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 	std::cout<<"GETS hERE?"<<std::endl;
 	//ds->plotOn(frame,Name(Form("ds%d",_count)),Binning(nbinsmasshisto),MarkerSize(1.55),MarkerStyle(20),LineColor(1),LineWidth(4));
-	if(tree=="EffInfoTreeFit")frame->SetMaximum(nsig.getVal()*0.8);
+//	if(tree=="ntphi")frame->SetMaximum(nsig.getVal()*0.8);
+	if(tree=="ntphi")frame->SetMaximum(nsig.getVal()*0.9);
+
 	if(tree=="ntKp")frame->SetMaximum(nsig.getVal()*0.9);
 	//	frame->SetMaximum((h->GetBinContent(h->GetMaximumBin())+h->GetBinError(h->GetMaximumBin()))*1.8);
-	//model->paramOn(frame,Layout(x_2+0.5, x_2+0.5, y_1+0.16), Format("NEU",AutoPrecision(3)));
-	 model->paramOn(frame,Layout(0.65, x_2, y_1-0.06), Format("NEU",AutoPrecision(3)));
+	model->paramOn(frame,Layout(x_2+0.5, x_2+0.5, y_1+0.16), Format("NEU",AutoPrecision(3)));
+	 //model->paramOn(frame,Layout(0.65, x_2, y_1-0.06), Format("NEU",AutoPrecision(3)));
+	
+	
 	frame->getAttText()->SetTextSize(0.00);
 	/*  frame->getAttFill()->SetFillStyle(0);
 		frame->getAttLine()->SetLineWidth(0);*/
@@ -490,11 +505,11 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	//  frame->GetXaxis()->SetTitle("m_{J/#psi(#mu#amu)#it{#phi}(KK)} (GeV/c^{2})");
 	//  frame->SetXTitle("mass lol");
 	//	if(tree=="ntKp")frame->SetXTitle("m_{J/#psi(#mu#mu)K^{#pm}} (GeV/c^{2})");
-	//	if(tree=="EffInfoTreeFit")frame->SetXTitle("m_{J/#psi(#mu#mu)#it{#phi}(KK)} (GeV/c^{2})");
+	//	if(tree=="ntphi")frame->SetXTitle("m_{J/#psi(#mu#mu)#it{#phi}(KK)} (GeV/c^{2})");
 
 	if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psiK^{#pm}} (GeV/c^{2})");
-	//if(tree=="EffInfoTreeFit")frameMC->SetXTitle("m_{J/#psi#it{#phi}} (GeV/c^{2})");
-	if(tree=="EffInfoTreeFit")frameMC->SetXTitle("m_{J/#psi{K^{+}K^{-}}} (GeV/c^{2})");
+	//if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psi#it{#phi}} (GeV/c^{2})");
+	if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psi{K^{+}K^{-}}} (GeV/c^{2})");
 
 	//  frame->SetXTitle("m_{J/#psi(#mu#mu)#it{#phi}(KK)} (GeV/c^{2})");
 	/*pull_plot->SetTitleFont(42, "X");
@@ -537,10 +552,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 	pull_plot->SetXTitle("");
 	//	if(tree=="ntKp")pull_plot->SetXTitle("m_{J/#psi(#mu#mu)K^{#pm}} (GeV/c^{2})");
-	//	if(tree=="EffInfoTreeFit")pull_plot->SetXTitle("m_{J/#psi(#mu#mu)#it{#phi}(KK)} (GeV/c^{2})");
+	//	if(tree=="ntphi")pull_plot->SetXTitle("m_{J/#psi(#mu#mu)#it{#phi}(KK)} (GeV/c^{2})");
 	if(tree=="ntKp")pull_plot->SetXTitle("m_{J/#psiK^{#pm}} (GeV/c^{2})");
-	//	if(tree=="EffInfoTreeFit")pull_plot->SetXTitle("m_{J/#psi#it{#phi}} (GeV/c^{2})");
-	if(tree=="EffInfoTreeFit")pull_plot->SetXTitle("m_{J/#psiK^{+}K^{-}} (GeV/c^{2})");
+	//	if(tree=="ntphi")pull_plot->SetXTitle("m_{J/#psi#it{#phi}} (GeV/c^{2})");
+	if(tree=="ntphi")pull_plot->SetXTitle("m_{J/#psiK^{+}K^{-}} (GeV/c^{2})");
 
 
 	pull_plot->SetYTitle("Pull");
@@ -675,7 +690,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	texsup->SetTextSize(0.05);
 	texsup->SetLineWidth(2);
 	TLatex* texB;
-	if(tree=="EffInfoTreeFit") texB = new TLatex(0.21,0.82,"B^{0}_{s}");
+	if(tree=="ntphi") texB = new TLatex(0.21,0.82,"B^{0}_{s}");
 	if(tree=="ntKp") texB = new TLatex(0.21,0.8,"B^{#pm}");
 	if(drawSup) texB = new TLatex(0.55,0.84,"B^{0}_{s}");
 	texB->SetNDC();
@@ -785,6 +800,25 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 
 
+	mass->setRange("signal",init_mean-SignalWidth, init_mean+SignalWidth);
+	RooAbsReal* RangeBakground = bkg.createIntegral(*mass,NormSet(*mass),Range("signal")); 
+	
+
+	//cout << "RangeBakground = " << RangeBakground << endl;
+
+	double Calback = RangeBakground->getVal() * nbkg.getVal();
+	double StatSig = yield/sqrt(yield + Calback);
+
+	TLatex *lat = new TLatex();
+	lat->SetNDC();
+	lat->SetTextSize(0.045);
+
+
+	lat->DrawLatex(0.63,0.55,Form("S = %.1f",yield));	
+	lat->DrawLatex(0.63,0.50,Form("B = %.1f",Calback));	
+	lat->DrawLatex(0.63,0.45,Form("S/#sqrt{S+B} = %.1f",StatSig));	
+	
+	lat->Draw("SAME");
 
 	return fitResult;
 
@@ -899,7 +933,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 
 
 
-   RooRealVar Bmass = *(w->var("BmassNew"));
+   RooRealVar Bmass = *(w->var("Bmass"));
 //RooAbsPdf* model  = w->pdf("model");
 RooAbsPdf* model  = w->pdf(ModName.Data());
 
@@ -989,7 +1023,7 @@ if(particle == 0){
 void validate_fit(RooWorkspace* w, TString tree, TString variable, int full, int CentMin, int CentMax, int ptMin, int ptMax)
 {
 	std::cout << "Now Perform Check on Fit" << std::endl;
-	RooRealVar Bmass = *(w->var("BmassNew"));
+	RooRealVar Bmass = *(w->var("Bmass"));
 	RooAbsPdf* model  = w->pdf(Form("model%d",_count));
 	//RooDataSet* data = (RooDataSet*) w->data("data");
 
@@ -1201,7 +1235,7 @@ void validate_fit(RooWorkspace* w, TString tree, TString variable, int full, int
 			c_errors->SaveAs(Form("new/error_signal_full%d_%s_%d_%s.png",full,variable.Data(),_count,tree.Data()));
 			//c_errors->SaveAs("./results/Bu/pulls/pulls_error.gif");
 		}
-		else if(tree=="EffInfoTreeFit"){
+		else if(tree=="ntphi"){
 			c_pull->SaveAs(Form("newFIT/pull_signal_%s_%d_%d_%d_%d_%d_Bs.png",variable.Data(),CentMin,CentMax,ptMin,ptMax,i));
 			//c_pull->SaveAs("./mcstudy/pulls_poisson_Bs.pdf");
 			c_params->SaveAs(Form("newFIT/param_signal_%s_%d_%d_%d_%d_%d_Bs.png",variable.Data(),CentMin,CentMax,ptMin,ptMax,i));
@@ -1210,7 +1244,7 @@ void validate_fit(RooWorkspace* w, TString tree, TString variable, int full, int
 		}
 	}
 	/*
-	   else if(tree=="EffInfoTreeFit"){
+	   else if(tree=="ntphi"){
 	   c_pull->SaveAs(Form("new/StepScan/pull/pull_signal_full%d_%s_%d_%d_Bs.png",full,variable.Data(),_count,NTrial));
 //c_pull->SaveAs("./mcstudy/pulls_poisson_Bs.pdf");
 c_params->SaveAs(Form("new/StepScan/param/param_signal_full%d_%s_%d_%d_Bs.png",full,variable.Data(),_count,NTrial));
