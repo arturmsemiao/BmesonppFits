@@ -186,7 +186,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
  y_1 = y_2 - y_space*nitems;
 
 
- modelMC->paramOn(frameMC,Layout(x_1, x_2, y_1), Format("NEU",AutoPrecision(1)));
+ modelMC->paramOn(frameMC,Layout(x_1, x_2, 0.8), Format("NEU",AutoPrecision(1)));
  frameMC->getAttText()->SetTextSize(0.02);
  frameMC->SetMaximum(nsigMC.getVal()*1.2);
 
@@ -307,6 +307,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 
 //	mean.setConstant();
+/*
     sigma1.setConstant();
     if(pdf!="1gauss"){
       sigma2.setConstant();
@@ -341,7 +342,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
    // fitResult = model->fitTo(*ds,Save(), Minos() , Extended(kTRUE));
 
     }
-
+*/
     RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos() , Extended(kTRUE));
 
 
@@ -451,7 +452,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
     if(tree=="ntKp")frame->SetMaximum(nsig.getVal()*0.57);
     if(tree=="ntKp")frame->SetMaximum(nsig.getVal()*0.80);
 //	frame->SetMaximum((h->GetBinContent(h->GetMaximumBin())+h->GetBinError(h->GetMaximumBin()))*1.8);
-//	model->paramOn(frame,Layout(0.65, x_2, y_1-0.06), Format("NEU",AutoPrecision(3)));
+	model->paramOn(frame,Layout(0.55, 0.95, 0.7), Format("NEU",AutoPrecision(3)));
  	model->paramOn(frame,Layout(x_2+0.5, x_2+0.5, y_1+0.16), Format("NEU",AutoPrecision(3)));
  
   frame->getAttText()->SetTextSize(0.02);
@@ -618,12 +619,12 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
   leg->SetTextFont(42);
   leg->SetFillStyle(0);
 	//leg->AddEntry(frame->findObject(Form("ds%d",_count),"Data","pl");
-  leg->AddEntry(h,"Data","pl");
-  leg->AddEntry(frame->findObject(Form("model%d",_count)),"Fit","l");
-  leg->AddEntry(frame->findObject(Form("sig%d",_count)),"Signal","f");
+  //leg->AddEntry(h,"Data","pl");
+  //leg->AddEntry(frame->findObject(Form("model%d",_count)),"Fit","l");
+  //leg->AddEntry(frame->findObject(Form("sig%d",_count)),"Signal","f");
 	//leg->AddEntry(frame->findObject(Form("bkg%d",_count)),"Combinatorial","l");
-  leg->AddEntry(frame->findObject(Form("bkg%d",_count)),"Background","l");
-  if(npfit != "1") leg->AddEntry(frame->findObject(Form("peakbg%d",_count)),"B #rightarrow J/#psi X","f");
+  //leg->AddEntry(frame->findObject(Form("bkg%d",_count)),"Background","l");
+  //if(npfit != "1") leg->AddEntry(frame->findObject(Form("peakbg%d",_count)),"B #rightarrow J/#psi X","f");
 
   TLatex* texcms = new TLatex(0.21,0.88,"CMS");
   texcms->SetNDC();

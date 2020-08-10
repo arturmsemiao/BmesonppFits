@@ -540,6 +540,7 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 1, int usePbPb =
 	       // c->SaveAs(Form("%s%s/%s_%s_%d%s_%d%d.png",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),_count,_postfix.Data(), (int)ptBins_check[i],(int)ptBins_check[i+1]));
 	       // c->SaveAs(Form("%s%s/%s_%s_%d%s_%d%d.C",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),_count,_postfix.Data(), (int)ptBins_check[i],(int)ptBins_check[i+1]));
 		cMC->SaveAs(Form("%s%s/%s_%s_%d%s_%s_%d%d_doubly%d_%.0f_%0.f_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),_count,_postfix.Data(),_varExp.Data(), (int)ptBins_check[i], (int)ptBins_check[i+1], doubly,centmin,centmax)+tree+".pdf");
+		cMC->SaveAs(Form("%s%s/%s_%s_%d%s_%s_%d%d_doubly%d_%.0f_%0.f_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),_count,_postfix.Data(),_varExp.Data(), (int)ptBins_check[i], (int)ptBins_check[i+1], doubly,centmin,centmax)+tree+".png");
 	       // cMC->SaveAs(Form("%s%s/%s_%s_%d%s_%d%d.png",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),_count,_postfix.Data(), (int)ptBins_check[i], (int)ptBins_check[i+1]));
 	        //cMC->SaveAs(Form("%s%s/%s_%s_%d%s_%d%d.C",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),_count,_postfix.Data(), (int)ptBins_check[i], (int)ptBins_check[i+1]));
 	//        return;
